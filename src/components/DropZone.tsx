@@ -58,21 +58,38 @@ const DropZone = ({ onFileAccepted, progress, isProcessing }: DropZoneProps) => 
         {isProcessing ? (
           <div className="processing-container">
             <h2>Processing ZIP file...</h2>
-            <Line percent={progress} strokeWidth={2} strokeColor="#4caf50" />
-            <p>{Math.round(progress)}%</p>
+            <Line 
+              percent={progress} 
+              strokeWidth={3} 
+              strokeColor="#3a86ff" 
+              trailColor="#e1ebfe"
+              strokeLinecap="round"
+              className="progress-bar"
+            />
+            <p className="progress-text">{Math.round(progress)}% Complete</p>
           </div>
         ) : (
           <>
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
-            <h2>Drag & Drop ZIP File Here</h2>
+            <div className="dropzone-icon">
+              {isDragActive ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              )}
+            </div>
+            <h2>{isDragActive ? 'Drop ZIP File Here' : 'Drag & Drop ZIP File Here'}</h2>
             <p>or click to browse files</p>
-            <p className="file-limit">(Max file size: 50MB)</p>
+            <p className="file-limit">Maximum file size: 50MB</p>
             
-            {error && <p className="error-message">{error}</p>}
+            {error && <p className="dropzone-error">{error}</p>}
           </>
         )}
       </div>

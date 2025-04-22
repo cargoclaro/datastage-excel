@@ -1,12 +1,27 @@
 :root {
-  --primary-color: #4caf50;
-  --secondary-color: #2196f3;
-  --error-color: #f44336;
-  --success-color: #4caf50;
-  --background-color: #f5f5f5;
-  --border-color: #e0e0e0;
-  --text-color: #333;
-  --light-text: #666;
+  --primary-color: #3a86ff;
+  --primary-light: #e1ebfe;
+  --primary-dark: #1a5cdb;
+  --secondary-color: #4cc9f0;
+  --success-color: #38b000;
+  --success-light: #d9f2d9;
+  --error-color: #e63946;
+  --error-light: #fdd8dc;
+  --warning-color: #ffbe0b;
+  --text-color: #333333;
+  --text-light: #51575d;
+  --background-color: #f5f9ff;
+  --card-background: #ffffff;
+  --border-color: #e0e8f5;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
 }
 
 * {
@@ -16,14 +31,14 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-main);
   color: var(--text-color);
   background-color: var(--background-color);
   line-height: 1.6;
 }
 
 .app-container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
   display: flex;
@@ -32,13 +47,23 @@ body {
 }
 
 header {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   text-align: center;
 }
 
 header h1 {
   color: var(--primary-color);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+header p {
+  color: var(--text-light);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 main {
@@ -46,10 +71,12 @@ main {
 }
 
 footer {
-  margin-top: 2rem;
+  margin-top: 3rem;
   text-align: center;
-  color: var(--light-text);
+  color: var(--text-light);
   font-size: 0.875rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border-color);
 }
 
 .dropzone-container {
@@ -58,68 +85,490 @@ footer {
 
 .dropzone {
   border: 2px dashed var(--border-color);
-  border-radius: 10px;
-  padding: 2rem;
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  background-color: white;
+  transition: all var(--transition-normal);
+  background-color: var(--card-background);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 250px;
+  min-height: 280px;
+  box-shadow: var(--shadow-sm);
 }
 
 .dropzone.active {
   border-color: var(--primary-color);
-  background-color: rgba(76, 175, 80, 0.05);
+  background-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
 }
 
 .dropzone.processing {
   cursor: default;
   border-color: var(--primary-color);
+  background-color: var(--card-background);
+  box-shadow: var(--shadow-md);
+}
+
+.dropzone:not(.active):not(.processing):hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .dropzone h2 {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   margin-bottom: 0.5rem;
   color: var(--text-color);
+  font-weight: 600;
 }
 
 .dropzone p {
   margin-bottom: 0.5rem;
-  color: var(--light-text);
+  color: var(--text-light);
 }
 
 .dropzone svg {
   color: var(--primary-color);
+  width: 80px;
+  height: 80px;
+  transition: transform var(--transition-fast);
+}
+
+.dropzone:hover svg {
+  transform: translateY(-5px);
 }
 
 .processing-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
+}
+
+.processing-info {
+  background-color: var(--primary-light);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--primary-color);
+  animation: fadeIn 0.5s ease;
+}
+
+.processing-info p {
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.processing-info p::before {
+  content: '•';
+  position: absolute;
+  left: 0.5rem;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.processing-info p:last-child {
+  margin-bottom: 0;
 }
 
 .error-message {
-  background-color: rgba(244, 67, 54, 0.1);
+  background-color: var(--error-light);
   color: var(--error-color);
-  padding: 1rem;
-  border-radius: 5px;
-  margin: 1rem 0;
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  margin: 1.5rem 0;
   text-align: center;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--error-color);
+  animation: fadeIn 0.5s ease;
 }
 
 .success-message {
-  background-color: rgba(76, 175, 80, 0.1);
+  background-color: var(--success-light);
   color: var(--success-color);
-  padding: 1rem;
-  border-radius: 5px;
-  margin: 1rem 0;
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  margin: 1.5rem 0;
   text-align: center;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--success-color);
+  animation: fadeIn 0.5s ease;
 }
 
 .file-limit {
   font-size: 0.875rem;
   opacity: 0.8;
+  margin-top: 0.75rem;
+}
+
+.error-message {
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-message::before {
+  content: "⚠️";
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.success-message {
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-message::before {
+  content: "✅";
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(58, 134, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(58, 134, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(58, 134, 255, 0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 1.25rem;
+  }
+  
+  header h1 {
+    font-size: 2rem;
+  }
+  
+  .dropzone {
+    padding: 1.5rem;
+    min-height: 220px;
+  }
+  
+  .dropzone svg {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+.dropzone-icon {
+  margin-bottom: 0.5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.progress-bar {
+  margin: 1.5rem 0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-text {
+  font-weight: 500;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  margin-top: 0.75rem;
+}
+
+.dropzone-error {
+  color: var(--error-color);
+  background-color: var(--error-light);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-top: 1rem;
+  font-weight: 500;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {transform: translateX(0);}
+  10%, 30%, 50%, 70%, 90% {transform: translateX(-5px);}
+  20%, 40%, 60%, 80% {transform: translateX(5px);}
+}
+
+.app-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.app-logo svg {
+  color: var(--primary-color);
+}
+
+.app-card {
+  background-color: var(--card-background);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 60px;
+  background-color: var(--primary-color);
+  border-radius: 3px;
+}
+
+.info-title {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.info-card {
+  background-color: var(--primary-light);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.step-number {
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.step-content h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+}
+
+.step-content p {
+  margin: 0;
+  color: var(--text-light);
+}
+
+.copyright {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+@media (min-width: 768px) {
+  .steps {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .step {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+  }
+  
+  .step-number {
+    margin-bottom: 1rem;
+    width: 48px;
+    height: 48px;
+    font-size: 1.25rem;
+  }
+}
+
+.debug-toggle {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  margin-top: 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.debug-toggle:hover {
+  background-color: #555;
+}
+
+.debug-info {
+  background-color: #1e1e1e;
+  color: #ddd;
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin: 1rem 0;
+  font-family: monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease;
+  border: 1px solid #333;
+}
+
+.debug-info h3 {
+  color: #fff;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.debug-info pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.debug-info pre div {
+  margin-bottom: 0.25rem;
+  line-height: 1.4;
+}
+
+/* Fix for some browsers */
+input[type="file"] {
+  display: none;
+}
+
+/* Fix for button elements */
+button {
+  font-family: var(--font-main);
+}
+
+/* Ensure dropzone has pointer cursor even on hover */
+.dropzone {
+  cursor: pointer !important;
+}
+
+/* Fix for Firefox */
+@-moz-document url-prefix() {
+  .dropzone {
+    min-height: 280px;
+  }
+}
+
+.file-tips {
+  background-color: var(--primary-light);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  border-left: 4px solid var(--primary-color);
+}
+
+.file-tips p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.structure {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.good, .bad {
+  flex: 1;
+  min-width: 250px;
+}
+
+.good h4, .bad h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.structure pre {
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-size: 0.9rem;
+  margin: 0;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.good pre {
+  border-left: 3px solid var(--success-color);
+}
+
+.bad pre {
+  border-left: 3px solid var(--warning-color);
+}
+
+/* Scollbar styles for debug info */
+.debug-info::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.debug-info::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 4px;
+}
+
+.debug-info::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.debug-info::-webkit-scrollbar-thumb:hover {
+  background: #777;
 }
