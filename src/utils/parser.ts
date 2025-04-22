@@ -10,19 +10,43 @@ export interface ParsedData {
 }
 
 /**
+ * Parse ASC files from multiple folders and group rows by section code
+ * All files from all folders with the same section code will be concatenated
+ */
+export const parseAscFilesFromFolders = (
+  folderContents: Map<string, Map<string, string>>
+): ParsedData => {
+  // Create a combined map of all files from all folders
+  const allFileContents = new Map<string, string>();
+  
+  // Process each folder's files
+  for (const [folderName, fileContents] of folderContents.entries()) {
+    for (const [filename, content] of fileContents.entries()) {
+      // Use folder name as prefix to avoid filename conflicts
+      const prefixedFilename = `${folderName}/${filename}`;
+      allFileContents.set(prefixedFilename, content);
+    }
+  }
+  
+  // Use the existing parser function to process all files
+  return parseAscFiles(allFileContents);
+};
+
+/**
  * Parse ASC file contents and group rows by section code
  */
 export const parseAscFiles = (fileContents: Map<string, string>): ParsedData => {
   // Map to store rows by section code
   const sectionMap = new Map<string, AscRow[]>();
   
-  // Valid section codes from the requirements
+  // Valid section codes from the requirements, in the specified order
   const validSectionCodes = [
+    // Tablas con información a nivel de pedimento
     '501', '502', '503', '504', '505', '506', '507', '508', '509', '510', 
-    '511', '512', '520', '701', '702', '551', '552', '553', '554', '555', 
-    '556', '557', '558', 
-    // Add common section codes from example file if needed
-    '160', '240', '430'
+    '511', '512', '520', '701', '702',
+    // Tablas con información a nivel de partida (Secuencia de la fracción arancelaria)
+    '551', '552', '553', '554', '555', '556', '557', '558',
+
   ];
   
   // Possible section code column names to check

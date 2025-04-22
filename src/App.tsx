@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import DropZone from './components/DropZone'
 import { extractAscFromZip } from './utils/zipHandler'
-import { parseAscFiles } from './utils/parser'
+import { parseAscFiles, parseAscFilesFromFolders } from './utils/parser'
 import { generateExcel, downloadExcel } from './utils/excel'
 
 function App() {
@@ -69,7 +69,29 @@ function App() {
       setProcessingInfo(prev => [...prev, 'Parsing ASC files and organizing by section code...'])
       addDebugInfo("Starting ASC parsing...");
       
-      const { sectionMap, error: parseError } = parseAscFiles(fileContents)
+      // Create a map of folder to files
+      const folderMap = new Map<string, Map<string, string>>();
+      
+      // Group files by folder
+      for (const [path, content] of fileContents.entries()) {
+        // Split path into folder and filename
+        const parts = path.split('/');
+        const folderName = parts.length > 1 ? parts[0] : 'main';
+        const fileName = parts.length > 1 ? parts.slice(1).join('/') : path;
+        
+        // Initialize folder map if it doesn't exist
+        if (!folderMap.has(folderName)) {
+          folderMap.set(folderName, new Map<string, string>());
+        }
+        
+        // Add file to folder map
+        folderMap.get(folderName)?.set(fileName, content);
+      }
+      
+      addDebugInfo(`Organized files into ${folderMap.size} folders: ${Array.from(folderMap.keys()).join(', ')}`);
+      
+      // Use the new function to parse files from multiple folders
+      const { sectionMap, error: parseError } = parseAscFilesFromFolders(folderMap);
       
       if (parseError) {
         setError(parseError)
@@ -146,25 +168,35 @@ function App() {
         <div className="app-card">
           <h2 className="section-title">Upload Your File</h2>
           <div className="file-tips">
-            <p><strong>Tip:</strong> For best results, create a ZIP file that contains your .asc files directly at the root level, not in nested folders.</p>
+            <p><strong>Tip:</strong> The app now supports both direct files and nested folder structures in your ZIP files.</p>
             <div className="structure">
               <div className="good">
-                <h4>✅ Good Structure:</h4>
+                <h4>✅ Supported Structures:</h4>
                 <pre>
                   my-data.zip
                   ├── file1.asc
                   ├── file2.asc
                   └── file3.asc
                 </pre>
-              </div>
-              <div className="bad">
-                <h4>⚠️ May Require Debug:</h4>
                 <pre>
                   my-data.zip
                   └── folder/
                       ├── file1.asc
                       └── file2.asc
                 </pre>
+                <pre>
+                  my-data.zip
+                  ├── folder1/
+                  │   ├── file1.asc
+                  │   └── file2.asc
+                  └── folder2/
+                      ├── file1.asc
+                      └── file2.asc
+                </pre>
+              </div>
+              <div className="good">
+                <h4>✅ Multiple Folders Benefit:</h4>
+                <p>Files with the same section codes from different folders will be combined into the same Excel sheet!</p>
               </div>
             </div>
           </div>
