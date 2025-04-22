@@ -153,8 +153,8 @@ export const parseAscFiles = (fileContents: Map<string, string>): ParsedData => 
           delimiter: '|',
           header: true,
           skipEmptyLines: true,
-          transformHeader: (header) => header?.trim() || '',
-          transform: (value) => value?.trim() || ''
+          transformHeader: (header: string) => header?.trim() || '',
+          transform: (value: string) => value?.trim() || ''
         });
         
         // Check for parse errors

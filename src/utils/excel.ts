@@ -125,7 +125,9 @@ function autoSizeColumns(worksheet: XLSX.WorkSheet, headers: string[], data: str
   
   // Apply calculated widths
   colWidths.forEach((width, i) => {
-    worksheet['!cols'][i] = { width };
+    if (worksheet['!cols']) {
+      worksheet['!cols'][i] = { width };
+    }
   });
 }
 

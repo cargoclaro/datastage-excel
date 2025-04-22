@@ -33,13 +33,11 @@ export const extractAscFromZip = async (
     // Use loadAsync with progress callback
     const zipContent = await zip.loadAsync(zipFile, {
       // Update progress during loading (0-30%)
-      async: true,
-      checkCRC32: true,
-      onUpdate: (metadata) => {
-        const percent = Math.min(metadata.percent / 3, 30);
-        onProgress(percent);
-      }
+      checkCRC32: true
     });
+    
+    // Set progress to 30% after loading the zip
+    onProgress(30);
     
     // Log all files found in the ZIP for debugging
     const allFiles = Object.keys(zipContent.files);

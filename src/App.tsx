@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import DropZone from './components/DropZone'
 import { extractAscFromZip } from './utils/zipHandler'
-import { parseAscFiles, parseAscFilesFromFolders } from './utils/parser'
+import { parseAscFilesFromFolders } from './utils/parser'
 import { generateExcel, downloadExcel } from './utils/excel'
 import logoImage from './assets/Transparent_image_no_bg.png'
 
@@ -129,7 +129,7 @@ function App() {
       addDebugInfo("Iniciando generación de Excel...");
       
       const fileName = file.name.replace(/\.(zip|ZIP)$/, '')
-      const excelBlob = generateExcel(sectionMap, fileName)
+      const excelBlob = generateExcel(sectionMap)
       
       // Download the Excel file
       setProcessingInfo(prev => [...prev, 'Preparando descarga...'])
@@ -173,7 +173,7 @@ function App() {
           {processingInfo.length > 0 && isProcessing && (
             <div className="processing-info">
               <h3 className="info-title">Estado del procesamiento</h3>
-              {processingInfo.map((info, index) => (
+              {processingInfo.map((info: string, index: number) => (
                 <p key={index}>{info}</p>
               ))}
             </div>
@@ -197,7 +197,7 @@ function App() {
             <div id="debug-info" className="debug-info">
               <h3>Información de depuración</h3>
               <pre>
-                {debugInfo.map((info, index) => (
+                {debugInfo.map((info: string, index: number) => (
                   <div key={index}>{info}</div>
                 ))}
               </pre>
