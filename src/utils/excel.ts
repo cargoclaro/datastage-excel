@@ -151,8 +151,7 @@ function applyWorksheetStyling(worksheet: XLSX.WorkSheet): void {
  * Generate Excel file from parsed ASC data
  */
 export const generateExcel = (
-  sectionMap: Map<string, Array<Record<string, string>>>,
-  fileName: string = 'merged_data'
+  sectionMap: Map<string, Array<Record<string, string>>>
 ): Blob => {
   try {
     // Create a new workbook
