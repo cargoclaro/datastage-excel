@@ -25,13 +25,13 @@ const DropZone = ({ onFileAccepted, progress, isProcessing }: DropZoneProps) => 
     
     // Check file type
     if (!file.name.endsWith('.zip')) {
-      setError('Please upload a ZIP file');
+      setError('Por favor, sube un archivo ZIP');
       return;
     }
     
     // Check file size
     if (file.size > MAX_SIZE) {
-      setError(`File is too large. Maximum size is 50MB`);
+      setError(`El archivo es demasiado grande. El tamaño máximo es 50MB`);
       return;
     }
     
@@ -57,16 +57,16 @@ const DropZone = ({ onFileAccepted, progress, isProcessing }: DropZoneProps) => 
         
         {isProcessing ? (
           <div className="processing-container">
-            <h2>Processing ZIP file...</h2>
+            <h2>Procesando archivo ZIP...</h2>
             <Line 
               percent={progress} 
               strokeWidth={3} 
-              strokeColor="#3a86ff" 
-              trailColor="#e1ebfe"
+              strokeColor="var(--primary-color)" 
+              trailColor="var(--primary-light)"
               strokeLinecap="round"
               className="progress-bar"
             />
-            <p className="progress-text">{Math.round(progress)}% Complete</p>
+            <p className="progress-text">{Math.round(progress)}% Completado</p>
           </div>
         ) : (
           <>
@@ -85,9 +85,9 @@ const DropZone = ({ onFileAccepted, progress, isProcessing }: DropZoneProps) => 
                 </svg>
               )}
             </div>
-            <h2>{isDragActive ? 'Drop ZIP File Here' : 'Drag & Drop ZIP File Here'}</h2>
-            <p>or click to browse files</p>
-            <p className="file-limit">Maximum file size: 50MB</p>
+            <h2>{isDragActive ? 'Suelta el archivo ZIP aquí' : 'Arrastra y suelta el archivo ZIP aquí'}</h2>
+            <p>o haz clic para buscar archivos</p>
+            <p className="file-limit">Tamaño máximo de archivo: 50MB</p>
             
             {error && <p className="dropzone-error">{error}</p>}
           </>

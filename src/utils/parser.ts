@@ -33,6 +33,75 @@ export const parseAscFilesFromFolders = (
 };
 
 /**
+ * Create a combined identifier from multiple fields
+ */
+function createCombinedIdentifier(row: AscRow): string {
+  try {
+    // Extract year from FechaPagoReal field which has format "2025-03-05 11:58:12"
+    let year = '';
+    const fechaPagoReal = row['FechaPagoReal'] || row['fechaPagoReal'] || row['FECHA_PAGO_REAL'];
+    
+    if (fechaPagoReal) {
+      // The date format is "YYYY-MM-DD HH:MM:SS"
+      // Extract the first 4 characters which will be the year
+      if (fechaPagoReal.length >= 4) {
+        // Get just the last two digits of the year
+        year = fechaPagoReal.substring(2, 4);
+      }
+    }
+    
+    // If no year found, use empty string
+    if (!year) {
+      console.warn('Could not extract year from FechaPagoReal field');
+      year = '';
+    }
+    
+    // Get seccion aduanera (might be under different field names)
+    let seccion = '';
+    const seccionFields = ['seccionAduanera', 'seccion', 'aduana', 'SECCION', 'ADUANA', 'SECCION_ADUANERA', 'ClaveDoc', 'SeccionAd'];
+    for (const field of seccionFields) {
+      if (row[field]) {
+        seccion = row[field].trim();
+        break;
+      }
+    }
+    
+    // Get patente (might be under different field names)
+    let patente = '';
+    const patenteFields = ['patente', 'PATENTE', 'Patente'];
+    for (const field of patenteFields) {
+      if (row[field]) {
+        patente = row[field].trim();
+        break;
+      }
+    }
+    
+    // Get pedimento (might be under different field names)
+    let pedimento = '';
+    const pedimentoFields = ['pedimento', 'PEDIMENTO', 'Pedimento', 'numeroPedimento', 'pedimentoNumero', 'Pediment'];
+    for (const field of pedimentoFields) {
+      if (row[field]) {
+        pedimento = row[field].trim();
+        break;
+      }
+    }
+    
+    // Create array of non-empty values
+    const parts = [];
+    if (year) parts.push(year);
+    if (seccion) parts.push(seccion);
+    if (patente) parts.push(patente);
+    if (pedimento) parts.push(pedimento);
+    
+    // Join with single dashes
+    return parts.join('-');
+  } catch (error) {
+    console.warn('Error creating combined identifier:', error);
+    return 'ID-Unknown';
+  }
+}
+
+/**
  * Parse ASC file contents and group rows by section code
  */
 export const parseAscFiles = (fileContents: Map<string, string>): ParsedData => {
@@ -141,11 +210,18 @@ export const parseAscFiles = (fileContents: Map<string, string>): ParsedData => 
                 console.warn(`Uncommon section code "${sectionCode}" in file ${filename}. Including anyway.`);
               }
               
+              // Create combined identifier and add it as first field in row
+              const combinedId = createCombinedIdentifier(row);
+              const enhancedRow: AscRow = { 
+                "No_Pedimento": combinedId,
+                ...row
+              };
+
               // Add row to section map
               if (!sectionMap.has(sectionCode)) {
                 sectionMap.set(sectionCode, []);
               }
-              sectionMap.get(sectionCode)?.push(row);
+              sectionMap.get(sectionCode)?.push(enhancedRow);
             }
           } else {
             console.warn(`File ${filename} doesn't have a recognized section code column. Using filename section if available.`);
@@ -155,8 +231,18 @@ export const parseAscFiles = (fileContents: Map<string, string>): ParsedData => 
           if (!sectionMap.has(filenameSection)) {
             sectionMap.set(filenameSection, []);
           }
+          
+          // Add combined identifier to each row and add it to the section
+          const enhancedRows = rows.map(row => {
+            const combinedId = createCombinedIdentifier(row);
+            return {
+              "No_Pedimento": combinedId,
+              ...row
+            };
+          });
+          
           // Add all rows to this section
-          sectionMap.get(filenameSection)?.push(...rows);
+          sectionMap.get(filenameSection)?.push(...enhancedRows);
         }
       } catch (parseError) {
         console.error(`Error parsing file ${filename}:`, parseError);

@@ -1,8 +1,8 @@
 :root {
-  --primary-color: #3a86ff;
-  --primary-light: #e1ebfe;
-  --primary-dark: #1a5cdb;
-  --secondary-color: #4cc9f0;
+  --primary-color: #FF4F00;
+  --primary-light: #FFF0E6;
+  --primary-dark: #D84200;
+  --secondary-color: #FF7633;
   --success-color: #38b000;
   --success-light: #d9f2d9;
   --error-color: #e63946;
@@ -246,13 +246,13 @@ footer {
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(58, 134, 255, 0.4);
+    box-shadow: 0 0 0 0 rgba(255, 79, 0, 0.4);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(58, 134, 255, 0);
+    box-shadow: 0 0 0 10px rgba(255, 79, 0, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(58, 134, 255, 0);
+    box-shadow: 0 0 0 0 rgba(255, 79, 0, 0);
   }
 }
 
@@ -329,8 +329,9 @@ footer {
   margin-bottom: 1rem;
 }
 
-.app-logo svg {
-  color: var(--primary-color);
+.app-logo img {
+  height: 80px;
+  width: auto;
 }
 
 .app-card {

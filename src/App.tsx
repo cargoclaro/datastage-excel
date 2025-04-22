@@ -4,6 +4,7 @@ import DropZone from './components/DropZone'
 import { extractAscFromZip } from './utils/zipHandler'
 import { parseAscFiles, parseAscFilesFromFolders } from './utils/parser'
 import { generateExcel, downloadExcel } from './utils/excel'
+import logoImage from './assets/Transparent_image_no_bg.png'
 
 function App() {
   const [progress, setProgress] = useState(0)
@@ -32,19 +33,19 @@ function App() {
     setError(null)
     setSuccessMessage(null)
     setProcessingInfo([])
-    setDebugInfo([`Processing file: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`])
+    setDebugInfo([`Procesando archivo: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`])
     setShowDebug(false)
 
     try {
       // Extract ASC files from ZIP
-      setProcessingInfo([`Extracting ASC files from ${file.name}...`])
-      addDebugInfo("Starting ZIP extraction...");
+      setProcessingInfo([`Extrayendo archivos ASC de ${file.name}...`])
+      addDebugInfo("Iniciando extracción ZIP...");
       
       const fileContents = await extractAscFromZip(file, {
         onProgress: (percent) => setProgress(percent),
         onError: (errorMsg) => {
           setError(errorMsg);
-          addDebugInfo(`ZIP extraction error: ${errorMsg}`);
+          addDebugInfo(`Error de extracción ZIP: ${errorMsg}`);
         },
         onInfo: (info) => {
           addDebugInfo(info);
@@ -53,21 +54,21 @@ function App() {
 
       // Update info about extracted files
       const fileCount = fileContents.size
-      addDebugInfo(`Extracted ${fileCount} files from ZIP`);
+      addDebugInfo(`Extraídos ${fileCount} archivos del ZIP`);
       
       if (fileCount === 0) {
-        addDebugInfo("No files were extracted. Showing debug panel automatically.");
+        addDebugInfo("No se extrajo ningún archivo. Mostrando panel de depuración automáticamente.");
         setShowDebug(true);
-        setError("No ASC files could be extracted from the ZIP file. The ASC files may be in a subfolder structure. Check the debug information for details.");
+        setError("No se pudieron extraer archivos ASC del archivo ZIP. Los archivos ASC pueden estar en una estructura de subcarpetas. Consulte la información de depuración para obtener más detalles.");
         setIsProcessing(false);
         return;
       }
       
-      setProcessingInfo(prev => [...prev, `Found ${fileCount} ASC files in the ZIP archive.`])
+      setProcessingInfo(prev => [...prev, `Se encontraron ${fileCount} archivos ASC en el archivo ZIP.`])
 
       // Parse ASC files
-      setProcessingInfo(prev => [...prev, 'Parsing ASC files and organizing by section code...'])
-      addDebugInfo("Starting ASC parsing...");
+      setProcessingInfo(prev => [...prev, 'Analizando archivos ASC y organizando por código de sección...'])
+      addDebugInfo("Iniciando análisis ASC...");
       
       // Create a map of folder to files
       const folderMap = new Map<string, Map<string, string>>();
@@ -102,48 +103,48 @@ function App() {
 
       // Show info about section codes
       const sectionCodes = Array.from(sectionMap.keys()).sort()
-      addDebugInfo(`Found ${sectionCodes.length} different section codes`);
+      addDebugInfo(`Se encontraron ${sectionCodes.length} códigos de sección diferentes`);
       
       const sectionSummary = sectionCodes.map(code => {
         const count = sectionMap.get(code)?.length || 0
-        addDebugInfo(`Section ${code}: ${count} rows`);
-        return `Section ${code}: ${count} rows`
+        addDebugInfo(`Sección ${code}: ${count} filas`);
+        return `Sección ${code}: ${count} filas`
       })
 
       setProcessingInfo(prev => [
         ...prev, 
-        `Parsed data organized into ${sectionCodes.length} section codes:`,
+        `Datos analizados organizados en ${sectionCodes.length} códigos de sección:`,
         ...sectionSummary
       ])
 
       if (sectionMap.size === 0) {
-        setError('No valid data found in the ASC files.')
-        addDebugInfo("No sections found in parsed data");
+        setError('No se encontraron datos válidos en los archivos ASC.')
+        addDebugInfo("No se encontraron secciones en los datos analizados");
         setIsProcessing(false)
         return
       }
 
       // Generate Excel file
-      setProcessingInfo(prev => [...prev, 'Generating Excel file...'])
-      addDebugInfo("Starting Excel generation...");
+      setProcessingInfo(prev => [...prev, 'Generando archivo Excel...'])
+      addDebugInfo("Iniciando generación de Excel...");
       
       const fileName = file.name.replace(/\.(zip|ZIP)$/, '')
       const excelBlob = generateExcel(sectionMap, fileName)
       
       // Download the Excel file
-      setProcessingInfo(prev => [...prev, 'Preparing download...'])
-      addDebugInfo("Initiating download...");
+      setProcessingInfo(prev => [...prev, 'Preparando descarga...'])
+      addDebugInfo("Iniciando descarga...");
       
       downloadExcel(excelBlob, fileName)
       
-      setSuccessMessage(`Excel file "${fileName}.xlsx" has been created with ${sectionCodes.length} sheets.`)
-      addDebugInfo("Process completed successfully");
+      setSuccessMessage(`El archivo Excel "${fileName}.xlsx" ha sido creado con ${sectionCodes.length} hojas.`)
+      addDebugInfo("Proceso completado exitosamente");
       setProgress(100)
     } catch (err) {
-      const errorMessage = 'Error processing file: ' + (err instanceof Error ? err.message : String(err));
+      const errorMessage = 'Error al procesar el archivo: ' + (err instanceof Error ? err.message : String(err));
       setError(errorMessage)
-      addDebugInfo(`Unexpected error: ${errorMessage}`);
-      console.error("Process error:", err);
+      addDebugInfo(`Error inesperado: ${errorMessage}`);
+      console.error("Error de proceso:", err);
       setShowDebug(true);
     } finally {
       setIsProcessing(false)
@@ -154,52 +155,15 @@ function App() {
     <div className="app-container">
       <header>
         <div className="app-logo">
-          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
-            <line x1="16" y1="8" x2="2" y2="22"></line>
-            <line x1="17.5" y1="15" x2="9" y2="15"></line>
-          </svg>
+          <img src={logoImage} alt="Logo" />
         </div>
-        <h1>ZIP to Excel Converter</h1>
-        <p>Easily convert your ZIP files containing ASC data into organized Excel sheets</p>
+        <h1>Convertidor Datastage a Excel</h1>
+        <p>Convierte fácilmente tus archivos ZIP con datos ASC en hojas de Excel organizadas</p>
       </header>
 
       <main>
         <div className="app-card">
-          <h2 className="section-title">Upload Your File</h2>
-          <div className="file-tips">
-            <p><strong>Tip:</strong> The app now supports both direct files and nested folder structures in your ZIP files.</p>
-            <div className="structure">
-              <div className="good">
-                <h4>✅ Supported Structures:</h4>
-                <pre>
-                  my-data.zip
-                  ├── file1.asc
-                  ├── file2.asc
-                  └── file3.asc
-                </pre>
-                <pre>
-                  my-data.zip
-                  └── folder/
-                      ├── file1.asc
-                      └── file2.asc
-                </pre>
-                <pre>
-                  my-data.zip
-                  ├── folder1/
-                  │   ├── file1.asc
-                  │   └── file2.asc
-                  └── folder2/
-                      ├── file1.asc
-                      └── file2.asc
-                </pre>
-              </div>
-              <div className="good">
-                <h4>✅ Multiple Folders Benefit:</h4>
-                <p>Files with the same section codes from different folders will be combined into the same Excel sheet!</p>
-              </div>
-            </div>
-          </div>
+          <h2 className="section-title">Sube tu archivo</h2>
           <DropZone 
             onFileAccepted={handleFileAccepted}
             progress={progress}
@@ -208,7 +172,7 @@ function App() {
           
           {processingInfo.length > 0 && isProcessing && (
             <div className="processing-info">
-              <h3 className="info-title">Processing Status</h3>
+              <h3 className="info-title">Estado del procesamiento</h3>
               {processingInfo.map((info, index) => (
                 <p key={index}>{info}</p>
               ))}
@@ -223,7 +187,7 @@ function App() {
                   className="debug-toggle"
                   onClick={() => setShowDebug(!showDebug)}
                 >
-                  {showDebug ? 'Hide Debugging Info' : 'Show Debugging Info'}
+                  {showDebug ? 'Ocultar información de depuración' : 'Mostrar información de depuración'}
                 </button>
               )}
             </div>
@@ -231,7 +195,7 @@ function App() {
           
           {error && debugInfo.length > 0 && showDebug && (
             <div id="debug-info" className="debug-info">
-              <h3>Debugging Information</h3>
+              <h3>Información de depuración</h3>
               <pre>
                 {debugInfo.map((info, index) => (
                   <div key={index}>{info}</div>
@@ -247,28 +211,64 @@ function App() {
           )}
         </div>
 
+        <div className="app-card">
+          <div className="file-tips">
+            <p><strong>Consejo:</strong> La aplicación ahora admite tanto archivos directos como estructuras de carpetas anidadas en tus archivos ZIP.</p>
+            <div className="structure">
+              <div className="good">
+                <h4>✅ Estructuras soportadas:</h4>
+                <pre>
+                  mis-datos.zip
+                  ├── archivo1.asc
+                  ├── archivo2.asc
+                  └── archivo3.asc
+                </pre>
+                <pre>
+                  mis-datos.zip
+                  └── carpeta/
+                      ├── archivo1.asc
+                      └── archivo2.asc
+                </pre>
+                <pre>
+                  mis-datos.zip
+                  ├── carpeta1/
+                  │   ├── archivo1.asc
+                  │   └── archivo2.asc
+                  └── carpeta2/
+                      ├── archivo1.asc
+                      └── archivo2.asc
+                </pre>
+              </div>
+              <div className="good">
+                <h4>✅ Beneficio de múltiples carpetas:</h4>
+                <p>¡Los archivos con los mismos códigos de sección de diferentes carpetas se combinarán en la misma hoja de Excel!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="app-card info-card">
-          <h2 className="section-title">How It Works</h2>
+          <h2 className="section-title">Cómo funciona</h2>
           <div className="steps">
             <div className="step">
               <div className="step-number">1</div>
               <div className="step-content">
-                <h3>Upload ZIP</h3>
-                <p>Drag and drop your ZIP file containing .asc files</p>
+                <h3>Subir ZIP</h3>
+                <p>Arrastra y suelta tu archivo ZIP que contiene archivos .asc</p>
               </div>
             </div>
             <div className="step">
               <div className="step-number">2</div>
               <div className="step-content">
-                <h3>Process Data</h3>
-                <p>We extract and organize all data by section codes</p>
+                <h3>Procesar datos</h3>
+                <p>Extraemos y organizamos todos los datos por códigos de sección</p>
               </div>
             </div>
             <div className="step">
               <div className="step-number">3</div>
               <div className="step-content">
-                <h3>Download Excel</h3>
-                <p>Get your organized Excel file with one sheet per section</p>
+                <h3>Descargar Excel</h3>
+                <p>Obtén tu archivo Excel organizado con una hoja por sección</p>
               </div>
             </div>
           </div>
@@ -276,8 +276,8 @@ function App() {
       </main>
 
       <footer>
-        <p>ZIP to Excel Converter - Converts ASC tables to Excel sheets organized by section codes</p>
-        <p className="copyright">© {new Date().getFullYear()} - All processing happens in your browser, your data never leaves your computer</p>
+        <p>Convertidor de ZIP a Excel - Convierte tablas ASC a hojas de Excel organizadas por códigos de sección</p>
+        <p className="copyright">© {new Date().getFullYear()} - Todo el procesamiento ocurre en tu navegador, tus datos nunca salen de tu computadora</p>
       </footer>
     </div>
   )
